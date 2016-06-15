@@ -20,7 +20,6 @@ import android.widget.TextView;
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context context;
-
     boolean isGPSEnabled = false;
     boolean isNetworkEnabled = false;
     boolean canGetLocation = false;

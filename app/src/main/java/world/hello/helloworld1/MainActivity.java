@@ -17,29 +17,37 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final TextView latitude = (TextView) findViewById(R.id.latitude);
-        final TextView longitude = (TextView) findViewById(R.id.longitude);
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+         TextView latitude = (TextView) findViewById(R.id.latitude);
+         TextView longitude = (TextView) findViewById(R.id.longitude);
+
+
         btnShowLocation = (Button) findViewById(R.id.show_location);
         gps = new GPSTracker(MainActivity.this);
+
+        if (gps.canGetLocation()) {
+            latitude.setText(String.valueOf(String.valueOf(gps.getLatitude())));
+            longitude.setText(String.valueOf(String.valueOf(gps.getLongitude())));
+        } else {
+            gps.showSettingsAlert();
+        }
 
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
                                                @Override
                                                public void onClick(View v) {
 
                                                    // gps.initializeLocation();
-
                                                    if (gps.canGetLocation()) {
-                                                       double latitude = gps.getLatitude();
-                                                       double longitude = gps.getLongitude();
-
+                                                       double latitudeValue = gps.getLatitude();
+                                                       double longitudeValue = gps.getLongitude();
                                                        Toast.makeText(
                                                                getApplicationContext(),
-                                                               "Your Location is -\nLat: " + latitude + "\nLong: "
-                                                                       + longitude, Toast.LENGTH_LONG).show();
+                                                               "Your Location is -\nLat: " + latitudeValue + "\nLong: "
+                                                                       + longitudeValue, Toast.LENGTH_LONG).show();
                                                    } else {
                                                        gps.showSettingsAlert();
                                                    }
