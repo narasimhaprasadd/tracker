@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -91,6 +92,8 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
         //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
 
     }
 
@@ -225,6 +228,8 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
             // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             mMap.clear();
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -236,10 +241,12 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
                 return;
             }
             mMap.setMyLocationEnabled(true);
-//            Marker marker = mMap.addMarker(new MarkerOptions()
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,16));
+
+
+            //            Marker marker = mMap.addMarker(new MarkerOptions()
 //                    .position(point)
 //                    .title("INDIA"));
-//            mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
         } else {
             Log.d(TAG, "location is null ...............");
         }
