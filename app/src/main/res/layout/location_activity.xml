@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+
+    tools:context="world.hello.helloworld1.MainActivity"
+android:background="#ffffa6c7">
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/map"
+        tools:context="com.example.snerella.maps.MapsActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_above="@+id/show_location"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+
+    <Button
+    style="?android:attr/buttonStyleSmall"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text="Send my location"
+    android:id="@+id/show_location"
+        android:background="#ffff1a7c"
+    android:textColor="#ffffffff"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true" />
+
+<TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/tvLocation"
+    android:layout_marginBottom="98dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>
