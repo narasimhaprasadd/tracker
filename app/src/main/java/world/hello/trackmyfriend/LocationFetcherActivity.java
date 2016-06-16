@@ -89,10 +89,8 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
                 Toast.makeText(getApplicationContext(), "Your new location has been updated successfully", Toast.LENGTH_LONG).show();
             }
         });
-        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
 
     }
@@ -100,18 +98,6 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//
-//        // Add a marker in Sydney and move the camera
-//        LatLng point = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
-//
-//        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//        // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//        Marker marker = mMap.addMarker(new MarkerOptions()
-//                .position(point)
-//                .title("INDIA"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
-
     }
 
     private String prepareDataToSend() throws IOException {
@@ -124,10 +110,6 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
         dataToSend += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getLongitude()), "UTF-8");
         dataToSend += "&" + URLEncoder.encode("accuracy", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getAccuracy()), "UTF-8");
         dataToSend += "&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getTime()), "UTF-8");
-
-//           String responseFromServer = receiveDataFromServer(urlConnection);
-//            Log.d(TAG,responseFromServer);
-
         return dataToSend;
     }
 
@@ -161,18 +143,11 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
         startLocationUpdates();
-
     }
 
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -222,31 +197,17 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
 
             LatLng point = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             btnFusedLocation.setText("Send your location \n Accurate to " + mCurrentLocation.getAccuracy() + " meters");
-
-
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             mMap.clear();
             mMap.getUiSettings().setZoomControlsEnabled(true);
             mMap.getUiSettings().setCompassEnabled(true);
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,16));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
 
-
-            //            Marker marker = mMap.addMarker(new MarkerOptions()
-//                    .position(point)
-//                    .title("INDIA"));
         } else {
             Log.d(TAG, "location is null ...............");
         }

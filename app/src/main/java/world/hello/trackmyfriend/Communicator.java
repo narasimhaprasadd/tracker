@@ -67,6 +67,7 @@ public class Communicator extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void result) {
         // dismiss progress dialog and update ui
         Log.d("LocationActivity", "Data sent successfully");
+
     }
 
     public void setData(String data) {
