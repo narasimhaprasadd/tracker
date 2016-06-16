@@ -1,4 +1,4 @@
-package world.hello.helloworld1;
+package world.hello.trackmyfriend;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

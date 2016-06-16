@@ -1,11 +1,11 @@
-package world.hello.helloworld1;
+package world.hello.trackmyfriend;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +21,13 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.net.URLConnection;
@@ -30,7 +35,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 
-public class LocationFetcherActivity extends Activity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
+public class LocationFetcherActivity extends FragmentActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
     private GoogleMap mMap;
 
     private static final String TAG = "LocationActivity";
@@ -86,9 +91,9 @@ public class LocationFetcherActivity extends Activity implements LocationListene
                 Toast.makeText(getApplicationContext(), "Your new location has been updated successfully", Toast.LENGTH_LONG).show();
             }
         });
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
+        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getFragmentManager() .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
     }
 
@@ -120,8 +125,8 @@ public class LocationFetcherActivity extends Activity implements LocationListene
         dataToSend += "&" + URLEncoder.encode("accuracy", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getAccuracy()), "UTF-8");
         dataToSend += "&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getTime()), "UTF-8");
 
-        //   String responseFromServer = receiveDataFromServer(urlConnection);
-        //    Log.d(TAG,responseFromServer);
+//           String responseFromServer = receiveDataFromServer(urlConnection);
+//            Log.d(TAG,responseFromServer);
 
         return dataToSend;
     }
@@ -215,15 +220,17 @@ public class LocationFetcherActivity extends Activity implements LocationListene
                     "Longitude: " + lng + "\n" +
                     "Accuracy: " + mCurrentLocation.getAccuracy());
 
-//            LatLng point = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+            LatLng point = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+            btnFusedLocation.setText("Send your location \n Accurate to " +mCurrentLocation.getAccuracy() + " meters");
 
-//            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//            // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//            Marker marker = mMap.addMarker(new MarkerOptions()
-//                    .position(point)
-//                    .title("INDIA"));
-//            mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
+
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                    .position(point)
+                    .title("INDIA"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
         } else {
             Log.d(TAG, "location is null ...............");
         }
@@ -249,4 +256,6 @@ public class LocationFetcherActivity extends Activity implements LocationListene
             Log.d(TAG, "Location update resumed .....................");
         }
     }
+
+
 }

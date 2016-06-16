@@ -1,4 +1,4 @@
-package world.hello.helloworld1;
+package world.hello.trackmyfriend;
 
 import android.Manifest;
 import android.app.AlertDialog;

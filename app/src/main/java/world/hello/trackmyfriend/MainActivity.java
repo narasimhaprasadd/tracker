@@ -1,4 +1,4 @@
-package world.hello.helloworld1;
+package world.hello.trackmyfriend;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
