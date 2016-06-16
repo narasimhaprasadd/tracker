@@ -227,6 +227,7 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.clear();
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(point)
                     .title("INDIA"));
