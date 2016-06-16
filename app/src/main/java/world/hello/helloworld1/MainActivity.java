@@ -11,6 +11,9 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity {
 
     Button btnShowLocation;
+    private TextView longitude;
+    private TextView latitude;
+
 
     GPSTracker gps;
 
@@ -22,16 +25,16 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-         TextView latitude = (TextView) findViewById(R.id.latitude);
-         TextView longitude = (TextView) findViewById(R.id.longitude);
+        latitude = (TextView) findViewById(R.id.latitude);
+        longitude = (TextView) findViewById(R.id.longitude);
 
 
         btnShowLocation = (Button) findViewById(R.id.show_location);
         gps = new GPSTracker(MainActivity.this);
 
         if (gps.canGetLocation()) {
-            latitude.setText(String.valueOf(String.valueOf(gps.getLatitude())));
-            longitude.setText(String.valueOf(String.valueOf(gps.getLongitude())));
+            latitude.setText(String.valueOf(gps.getLatitude()));
+            longitude.setText(String.valueOf(gps.getLongitude()));
         } else {
             gps.showSettingsAlert();
         }
