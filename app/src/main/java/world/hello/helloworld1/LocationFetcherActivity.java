@@ -1,14 +1,18 @@
 package world.hello.helloworld1;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,13 +21,17 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
+import java.io.IOException;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 
-public class LocationFetcherActivity extends Activity implements
-        LocationListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class LocationFetcherActivity extends Activity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
+    private GoogleMap mMap;
 
     private static final String TAG = "LocationActivity";
     private static final long INTERVAL = 1000 * 10;
@@ -34,6 +42,8 @@ public class LocationFetcherActivity extends Activity implements
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation;
     String mLastUpdateTime;
+    URLConnection urlConnection;
+    String imsistring = null;
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -58,17 +68,64 @@ public class LocationFetcherActivity extends Activity implements
                 .build();
 
         setContentView(R.layout.location_activity);
-        tvLocation = (TextView) findViewById(R.id.tvLocation);
-
         btnFusedLocation = (Button) findViewById(R.id.show_location);
+        tvLocation = (TextView) findViewById(R.id.tvLocation);
         btnFusedLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 updateUI();
+                String dataToSend = null;
+                try {
+                    dataToSend = prepareDataToSend();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Communicator communicator = new Communicator();
+                communicator.setData(dataToSend);
+                communicator.execute();
+                Toast.makeText(getApplicationContext(), "Your new location has been updated successfully", Toast.LENGTH_LONG).show();
             }
         });
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
     }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+//
+//        // Add a marker in Sydney and move the camera
+//        LatLng point = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+//
+//        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//        // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        Marker marker = mMap.addMarker(new MarkerOptions()
+//                .position(point)
+//                .title("INDIA"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
+
+    }
+
+    private String prepareDataToSend() throws IOException {
+        TelephonyManager telephonyManager;
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        imsistring = telephonyManager.getSubscriberId();
+        Log.d(TAG, "Device id: " + imsistring);
+        String dataToSend = URLEncoder.encode("device_id", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(imsistring), "UTF-8");
+        dataToSend += "&" + URLEncoder.encode("latitude", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getLatitude()), "UTF-8");
+        dataToSend += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getLongitude()), "UTF-8");
+        dataToSend += "&" + URLEncoder.encode("accuracy", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getAccuracy()), "UTF-8");
+        dataToSend += "&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mCurrentLocation.getTime()), "UTF-8");
+
+        //   String responseFromServer = receiveDataFromServer(urlConnection);
+        //    Log.d(TAG,responseFromServer);
+
+        return dataToSend;
+    }
+
 
     @Override
     public void onStart() {
@@ -99,6 +156,7 @@ public class LocationFetcherActivity extends Activity implements
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
         startLocationUpdates();
+
     }
 
     protected void startLocationUpdates() {
@@ -115,6 +173,7 @@ public class LocationFetcherActivity extends Activity implements
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
         Log.d(TAG, "Location update started ..............: ");
+
     }
 
     @Override
@@ -131,8 +190,19 @@ public class LocationFetcherActivity extends Activity implements
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Firing onLocationChanged..............................................");
         mCurrentLocation = location;
+        enableOrDisableButton();
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         updateUI();
+    }
+
+    private void enableOrDisableButton() {
+        if (mCurrentLocation.getAccuracy() > 100f) {
+            btnFusedLocation.setEnabled(false);
+            btnFusedLocation.setText("Getting the better position...Please wait");
+        } else {
+            btnFusedLocation.setEnabled(true);
+            btnFusedLocation.setText("Send your location");
+        }
     }
 
     private void updateUI() {
@@ -144,6 +214,16 @@ public class LocationFetcherActivity extends Activity implements
                     "Latitude: " + lat + "\n" +
                     "Longitude: " + lng + "\n" +
                     "Accuracy: " + mCurrentLocation.getAccuracy());
+
+//            LatLng point = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+
+//            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//            // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//            Marker marker = mMap.addMarker(new MarkerOptions()
+//                    .position(point)
+//                    .title("INDIA"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
         } else {
             Log.d(TAG, "location is null ...............");
         }
