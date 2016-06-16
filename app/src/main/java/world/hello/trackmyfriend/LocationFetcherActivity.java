@@ -230,7 +230,7 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
         super.onResume();
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
-            Log.d(TAG, "Location update resumed .....................");
+            Log.d(TAG, "Location update resumed ....................");
         }
     }
 
