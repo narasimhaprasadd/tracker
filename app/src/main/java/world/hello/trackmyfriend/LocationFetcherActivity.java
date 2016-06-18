@@ -1,6 +1,7 @@
 package world.hello.trackmyfriend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
     private static final long INTERVAL = 1000 * 10;
     private static final long FASTEST_INTERVAL = 1000 * 5;
     Button btnFusedLocation;
+    Button track;
     TextView tvLocation;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -73,6 +75,15 @@ public class LocationFetcherActivity extends FragmentActivity implements Locatio
         setContentView(R.layout.location_activity);
         btnFusedLocation = (Button) findViewById(R.id.show_location);
         tvLocation = (TextView) findViewById(R.id.tvLocation);
+        track=(Button)findViewById(R.id.t);
+        track.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0){
+                Intent mainIntent = new Intent(LocationFetcherActivity.this,MapClass.class);
+                LocationFetcherActivity.this.startActivity(mainIntent);
+                LocationFetcherActivity.this.finish();
+            }
+        });
         btnFusedLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
